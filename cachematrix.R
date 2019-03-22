@@ -2,35 +2,39 @@
 ## functions do
 
 ##  This function creates a special "matrix" object that can cache its inverse
-
-makeCacheMatrix <- function(x = matrix()) 
-{
-  inv <- NULL
-  set <- function(y)
+makeCacheMatrix <- function(x = matrix())
   {
+  invMatrix <- NULL
+  
+  #set the value of the Matrix
+  setMatrix <- function(y) {
     x <<- y
-    inv <<- NULL
+    invMatrix <<- NULL
   }
-  get <- function() x
-  setInverse <- function(solveMatrix) inv <<- solveMatrix
-  getInverse <- function() inv
-  list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
+  
+  getMatrix <- function() x                              #get the value of the Matrix
+  setInverse <- function(inverse) invMatrix <<- inverse  #set the value of the invertible matrix
+  getInverse <- function() invMatrix                     #get the value of the invertible matrix
+  list(setMatrix = setMatrix, getMatrix = getMatrix,
+       setInverse = setInverse, getInverse = getInverse)
+  
 }
-
 
 ## This function computes the inverse of the special "matrix" returned by makeCacheMatrix above
 
-cacheSolve <- function(x, ...) 
-{
+cacheSolve <- function(x, ...) {
   ## Return a matrix that is the inverse of 'x'
-  inv <- x$getInverse()
-  if(!is.null(inv))
-  {
-    message("getting cached data")
-    return(inv)
+  
+  #get the value of the invertible matrix from the makeCacheMatrix function
+  invMatrix <- x$getInverse()
+  if(!is.null(invMatrix)) {                       #if inverse matrix is not NULL
+    message("Getting Cached Invertible Matrix")   #Type message: Getting Cached Invertible Matrix 
+    return(invMatrix)                             #return the invertible matrix
   }
-  data <- x$get()
-  inv <- solve(data)
-  x$setInverse(inv)
-  inv      
+  
+  #if value of the invertible matrix is NULL then  
+  MatrixData <- x$getMatrix()                     #get the original Matrix Data 
+  invMatrix <- solve(MatrixData, ...)             #use solve function to inverse the matrix
+  x$setInverse(invMatrix)                         #set the invertible matrix 
+  return(invMatrix)                               #return the invertible matrix
 }
